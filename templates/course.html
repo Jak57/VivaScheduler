@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Courses
+{% endblock %}
+
+{% block main %}
+    <form action="/schedule" method="post">
+        <div class="form-group">
+            <select class="form-control" name="course" autofocus>
+                <option disabled selected value="">Course</option>
+                {% for row in courses %}
+                    <option value="{{ row.course }}">{{ row.course }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">Select</button>
+    </form>
+{% endblock %}

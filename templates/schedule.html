@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Registrants
+{% endblock %}
+
+{% block main %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Registration</th>
+                <th>Course</th>
+                <th>Status</th>
+                <th>Update</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registrant in registrants %}
+                <tr>
+                    <td>{{ registrant.username }}</td>
+                    <td>{{ registrant.course }}</td>
+                    <td>{{ registrant.status }}</td>
+                    <td>
+                        <form action="/schedule_calender" method="post">
+                            <div class="form-group">
+                                <select class="form-control" name="status">
+                                    <option disabled selected value="">Status</option>
+                                    {% for element in status %}
+                                        <option value="{{ element }}">{{ element }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <input name="name" type="hidden" value="{{ registrant.username }}">
+                            <input name="course" type="hidden" value="{{ registrant.course }}">
+                            <button class="btn btn-primary" type="submit">Update</button>
+                        </form>
+                    </td>
+                    <td>{{ registrant.datetime }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

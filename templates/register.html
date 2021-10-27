@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+
+{% block main %}
+
+    <form action="/register" method="post">
+        <div class="form-group">
+            <select class="form-control" name="type" autofocus>
+                <option disabled selected value="">Type</option>
+                {% for type in user_types %}
+                    <option value="{{ type }}">{{ type }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" class="form-control" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" type="password">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="confirmation" placeholder="Password (again)" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+    <br>
+    <p class="small text-center text-muted">
+        Note: Students must provide their academic registration no. as username and teachers must provide their official name as username.<br>
+        Note: Length of password must be atleast 5 and it must contain letter, digit and symbol.
+    </p>
+
+{% endblock %}

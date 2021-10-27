@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Portfolio
+{% endblock %}
+
+{% block main %}
+    <h4>Courses Scheduled For Viva</h4><br>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Semester</th>
+                <th>Teacher</th>
+                <th>Course</th>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in courses %}
+                <tr>
+                    <td>{{ row.semester }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.course }}</td>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.time }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
