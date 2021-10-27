@@ -69,7 +69,7 @@ db = SQL("sqlite:///scheduler.db")
 @app.route("/")
 @login_required
 def index():
-    """Show portfolio of stocks"""
+    """Shows all scheduled viva."""
 
     courses = db.execute("SELECT * FROM courses ORDER BY course")
     return render_template("index.html", courses=courses)
