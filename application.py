@@ -13,13 +13,13 @@ from datetime import datetime
 # Configure application
 app = Flask(__name__)
 
-# User type
+# USER_TYPES (list of str): Types of user
 USER_TYPES = ["Student", "Teacher"]
 
-# Semesters
+# SEMESTERS (list of str): All semesters
 SEMESTERS = ["First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth"]
 
-# Courses
+# COURSES (list of str): All courses offered for the students of CSE department at SUST
 COURSES = [
     "CSE133", "CSE134", "CSE137", "CSE138", "CSE143", "CSE150",
     "CSE233", "CSE234", "CSE237", "CSE238", "CSE239", "CSE240",
@@ -34,13 +34,13 @@ COURSES = [
     "IPE108D", "PHY103D", "PHY202D","PHY207D", "BUS203D", "STA202D", "ECO105D"
 ]
 
-# Status
+# STATUS (list of str): All possible viva status
 STATUS = ["Running..", "Done", "Absent"]
 
-# Course which teacher will select
+# COURSE (str): Course which teacher will select for seeing viva schedule
 COURSE = ""
 
-# Course selected by student to see history
+# COURSE_S (str): Course selected by student to see history
 COURSE_S = ""
 
 # Ensure templates are auto-reloaded
@@ -69,9 +69,12 @@ db = SQL("sqlite:///scheduler.db")
 @app.route("/")
 @login_required
 def index():
-    """Shows all scheduled viva."""
+    """Shows all the viva which are scheduled sorted by course in alphabetical order"""
 
+    # Selects all the courses from courses table
     courses = db.execute("SELECT * FROM courses ORDER BY course")
+
+    # Shows the page with all the viva
     return render_template("index.html", courses=courses)
 
 
@@ -106,8 +109,6 @@ def login():
         # Remember user type
         session["user_type"] = rows[0]["type"]
 
-        # print("\n\n", session["user_type"], type(session["user_type"]), "\n\n")
-
         # Redirect user to home page
         return redirect("/")
 
@@ -131,11 +132,18 @@ def logout():
 @login_required
 def course_teacher():
     """
-    Shows all the courses for which teacher has scheduled viva.
+    Shows all the courses for which teacher has scheduled viva sorted by
+    course in alphabetical order
     """
+
+    # id (int): User's id
     id = session["user_id"]
+
+    # Selects all the courses which are scheduled by the teacher with the id sorted by course in
+    # alphabetical order
     courses = db.execute("SELECT * FROM courses WHERE user_id = ? ORDER BY course", id)
 
+    # Shows the page of viva which are scheduled by teacher
     return render_template("teacher.html", courses=courses)
 
 
@@ -144,39 +152,54 @@ def course_teacher():
 def create():
     """Create scheduled viva"""
 
-    # User id
+    # id (int): User's id
     id = session["user_id"]
 
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensure semester was submitted
         semester = request.form.get("semester")
+
         if not semester:
             return apology("Missing semester")
 
+        # Ensure course was submitted
         course = request.form.get("course")
+
         if not course:
             return apology("Missing course")
 
+        # Ensure date was submitted
         date = request.form.get("date")
+
         if not date:
             return apology("Missing date")
 
+        # Ensure time was submitted
         time = request.form.get("time")
+
         if not time:
             return apology("Missing time")
 
+        # Selects user name from users table
         row = db.execute("SELECT username FROM users WHERE id = ?", id)
         name = row[0]["username"]
 
+        # Checks if the user has already registered for the course or not.
+        # If user has already registered return an apology
         row1 = db.execute("SELECT * FROM courses WHERE course = ?", course)
 
         if len(row1) > 0:
             return apology("Viva is already scheduled for this course.")
 
+        # Inserts user id, name, semester, course, viva date and time in the courses table
         db.execute("INSERT INTO courses (user_id, name, semester, course, date, time) VALUES(?, ?, ?, ?, ?, ?)", id, name, semester, course, date, time)
 
+        # Redirect user to the page where all the courses scheduled by user is present
         return redirect("/course_teacher")
 
+    # Shows a form for creating viva
     return render_template("create.html", semesters=SEMESTERS, courses=COURSES)
 
 
@@ -185,25 +208,40 @@ def create():
 def delete():
     """Delete scheduled viva"""
 
+    # id (int): User's id
     id = session["user_id"]
 
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensure course was submitted
         course = request.form.get("course")
+
         if not course:
             return apology("Missing course")
 
+        # Delete course from courses table which the teacher submitted
         db.execute("DELETE FROM courses WHERE user_id = ? AND course = ?", id, course)
-        
+
+        # Delete all registrants from the course from regitrants table
         db.execute("DELETE FROM registrants WHERE course = ?", course)
+
+        # Redirect user to the page where all the courses scheduled by user is present
         return redirect("/course_teacher")
 
+    # scheduled_courses (list): All the courses which are scheduled
+    # by the teacher
     scheduled_courses = []
+
+    # Selects all the courses which are scheduled by user sorted by alphabetical
+    # order of course
     row = db.execute("SELECT course FROM courses WHERE user_id = ? ORDER BY course", id)
 
+    # Insert all the courses in the list
     for element in row:
         scheduled_courses.append(element["course"])
 
+    # Shows a form to delete course
     return render_template("delete.html", scheduled_courses=scheduled_courses)
 
 
@@ -212,19 +250,29 @@ def delete():
 def schedule():
     """Shows schedule for viva"""
 
+    # id (int): User's id
     id = session["user_id"]
+
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensure course was submitted
         course = request.form.get("course")
+
         if not course:
             return apology("Missing course")
 
+        # COURSE -> global variable
         global COURSE
         COURSE = course
+
+        # Redirects to the page where all the schedule is for the course
         return redirect("/schedule_calender")
 
+    # Selects everyting from courses table sorted by course in alphabetical order
     courses = db.execute("SELECT * FROM courses WHERE user_id = ? ORDER BY course", id)
 
+    # Shows the form from where user can select course to see schedule
     return render_template("course.html", courses=courses)
 
 
@@ -233,12 +281,16 @@ def schedule():
 def schedule_calender():
     """Keep track of viva"""
 
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensures status was submitted
         status = request.form.get("status")
 
         if not status:
             status = "pending.."
+
+        # Collects name and course from form
         name = request.form.get("name")
         course = request.form.get("course")
 
@@ -247,13 +299,16 @@ def schedule_calender():
         date_time = now.strftime("%Y-%m-%d %H:%M:%S")
         date_time = str(date_time)
 
-        # Update status in history
+        # Update status in history table
         db.execute("UPDATE history SET status = ?, datetime = ? WHERE username = ? AND course = ?", status, date_time, name, course)
 
+        # Redirects to the page where all the schedule is for the course
         return redirect("/schedule_calender")
 
+    # Selects everyting from history table for the course sorted by students username
     registrants = db.execute("SELECT * FROM history WHERE course = ? ORDER BY username", COURSE)
 
+    # Shows the page where all the schedule is present
     return render_template("schedule.html", registrants=registrants, status=STATUS)
 
 
@@ -263,9 +318,14 @@ def taken_courses():
     """
     Displays all the courses a student has taken.
     """
+
+    # id (int): User's id who are of type student
     id = session["user_id"]
+
+    # Selects all the courses a student has registered
     courses = db.execute("SELECT * FROM registrants WHERE user_id = ? ORDER BY course", id)
 
+    # Shows the page with all the courses taken by student
     return render_template("taken_courses.html", courses=courses)
 
 
@@ -274,34 +334,48 @@ def taken_courses():
 def course_register():
     """ Register students for course."""
 
+    # id (int): User's id
     id = session["user_id"]
 
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensure course was submitted
         course = request.form.get("course")
+
         if not course:
             return apology("Missing course")
 
+        # Select all the available courses scheduled for viva
         row = db.execute("SELECT * FROM courses WHERE course = ?", course)
 
+        # Collects teacher's name
         teacher = row[0]["name"]
 
+        # Checks if the user has already registered for the course or not
+        # If user has already registered return an apology
         row1 = db.execute("SELECT * FROM registrants WHERE user_id = ? AND course = ? AND teacher = ?", id, course, teacher)
 
         if len(row1) > 0:
             return apology("You have already registered for this course!")
 
+        # Inserts user id, teacher and course into the registrants table
         db.execute("INSERT INTO registrants (user_id, teacher, course) VALUES(?, ?, ?)", id, teacher, course)
 
-        # Student name
+        # Collects student's name
         row = db.execute("SELECT username FROM users WHERE id = ?", id)
         name = row[0]["username"]
 
+        # Inserts student's username and coure into history table
         db.execute("INSERT INTO history (username, course) VALUES(?, ?)", name, course)
+
+        # Redirects the user to the page where all of the taken courses are present
         return redirect("/taken_courses")
 
+    # Selects all the available courses for viva
     courses = db.execute("SELECT * FROM courses ORDER BY course")
 
+    # Shows the registration form for the viva
     return render_template("course_register.html", courses=courses)
 
 
@@ -310,60 +384,80 @@ def course_register():
 def course_deregister():
     """Deregister from course"""
 
+    # id (int): User's id
     id = session["user_id"]
 
+    # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
+        # Ensure course was submitted
         course = request.form.get("course")
+
         if not course:
             return apology("Missing course")
 
-        # Student name
+        # Collects student's username
         row = db.execute("SELECT username FROM users WHERE id = ?", id)
         name = row[0]["username"]
 
-        # Delete student from history
+        # Delete student from the course in history table
         db.execute("DELETE FROM history WHERE username = ? AND course = ?", name, course)
 
+        # Delete user from the course in the registrants table
         db.execute("DELETE FROM registrants WHERE user_id = ? AND course = ?", id, course)
+
+        # Redirect user to the page where all of user's taken courses are present
         return redirect("/taken_courses")
 
+    # Selects all the courses the user has already registered
     courses = db.execute("SELECT * FROM registrants WHERE user_id = ? ORDER BY course", id)
 
+    # Show the form for deregistration from course
     return render_template("deregister.html", courses=courses)
 
 
 @app.route("/history", methods=["GET", "POST"])
 @login_required
 def history():
-    """Shows history of viva to student"""
+    """Shows the form selecting course to see history"""
 
+    # id (int): User's id
     id = session["user_id"]
-    
+
+    # User reached route via post (as by submitting a form via POST)
     if request.method == "POST":
-        
+
+        # Ensure course was submitted
         course = request.form.get("course")
-        
+
         if not course:
             return apology("Missing course")
-        
+
+        # COURSE_S -> global variable
         global COURSE_S
         COURSE_S = course
-        
+
+        # Redirects the user to the page where all the history for the course is present
         return redirect("/history_calender")
 
+    # Selects all the courses the user has registered
     courses = db.execute("SELECT course FROM registrants WHERE user_id = ? ORDER BY course", id)
 
+    # Shows the form for sumbitting course to see history
     return render_template("history.html", courses=courses)
-    
-    
+
+
 @app.route("/history_calender")
 @login_required
 def history_calender():
     """
     Shows the history of viva to student
     """
+
+    # Selects everyting from history table for the course
     registrants = db.execute("SELECT * FROM history WHERE course = ? ORDER BY username", COURSE_S)
+
+    # Show the history of the course
     return render_template("summary.html", registrants=registrants)
 
 
@@ -376,16 +470,19 @@ def register():
 
         # Ensure user type was submitted
         user_type = request.form.get("type")
+
         if not user_type:
             return apology("Must select user type")
 
         # Ensure user name was submitted
         username = request.form.get("username")
+
         if not username:
             return apology("MUST PROVIDE USERNAME!")
 
         # Ensure username doesn't exist already
         row = db.execute("SELECT * FROM users WHERE username = ?", username)
+
         if len(row) > 0:
             return apology("USERNAME ALREADY EXIST!")
 
