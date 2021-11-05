@@ -18,9 +18,9 @@ By selecting the course in which they are enrolled, they can see the entire hist
 
 # Prerequisites
 
-SL | Learning Task | Description | Status | Comment |
---:|:--------------|:------------|:------:|---------|
-1  | Language    | Python | ![ ](https://img.shields.io/badge/Python-Learned-green)  | |
-2  | Web Basic    | Basics of HTML, CSS | ![ ](https://img.shields.io/badge/HTML-Learned-green)  | |
-3  | Web Framework    | Flask | ![ ](https://img.shields.io/badge/Flask-Learned-green)  | |
-1  | Database    | SQL | ![ ](https://img.shields.io/badge/SQL-Learned-green)  | |
+SL | Learning Task | Description |
+--:|:--------------|:------------|
+1  | Language    | Python |  | |
+2  | Web Basic    | Basics of HTML, CSS |   | |
+3  | Web Framework    | Flask |   | |
+1  | Database    | SQLite |  | |
