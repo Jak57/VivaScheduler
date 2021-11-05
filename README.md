@@ -22,7 +22,7 @@ By selecting the course in which they are enrolled, they can see the entire hist
 SL | Learning Task | Description |
 --:|:--------------|:------------|
 1  | Language    | Python |  | |
-2  | Web Basic    | Basics of HTML, CSS |   | |
+2  | Web Basic    | HTML, CSS |   | |
 3  | Web Framework    | Flask |   | |
 4  | Database    | SQLite |  | |
 
