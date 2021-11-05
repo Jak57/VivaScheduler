@@ -29,5 +29,5 @@ SL | Learning Task | Description |
 
 # Project Setup
 Log in to CS50 IDE (https://ide.cs50.io/) using github. Create a directory called viva by typing **mkdir viva** in the command prompt. Go to the viva directory by typing **cd viva**. In the viva directory make two directories called **templates** and **static**. Store the html files in templates directory and css file in static directory. Store application.py, helpers.py, scheduler.db, requirements.txt in viva directory.
-Staying in viva directory type flask run in the command prompt. You will see a link. Clicking and opening the link you can interact with the entire web app.
+Staying in viva directory type **flask run** in the command prompt. You will see a **link**. Clicking and opening the link you can interact with the entire web app.
 
