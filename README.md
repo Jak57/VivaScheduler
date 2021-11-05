@@ -1,6 +1,7 @@
 # SUST Viva Scheduler
 YouTube video link for the project: https://youtu.be/VlpgEhphmcE
 
+
 # Description
 
 SUST Viva Scheduler is a dynamic web application that allows users to schedule and participate in viva or appointments. This app categorizes users in two types - student and teacher. Based on the type, users can have different functionalities.
@@ -24,3 +25,9 @@ SL | Learning Task | Description |
 2  | Web Basic    | Basics of HTML, CSS |   | |
 3  | Web Framework    | Flask |   | |
 1  | Database    | SQLite |  | |
+
+
+# Project Setup
+Log in to CS50 IDE using github. Create a directory called viva by typing mkdir viva in the command prompt. Go to the viva directory by typing cd viva. In the viva directory make two directories called templates and static. Store the html files in templates directory and css file in static directory. Store application.py, helpers.py, scheduler.db in viva directory.
+Staying in viva directory type flask run in the command prompt. You will see a link. Clicking and opening the link you can interact with the entire web app.
+
