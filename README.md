@@ -24,7 +24,7 @@ SL | Learning Task | Description |
 1  | Language    | Python |  | |
 2  | Web Basic    | Basics of HTML, CSS |   | |
 3  | Web Framework    | Flask |   | |
-1  | Database    | SQLite |  | |
+4  | Database    | SQLite |  | |
 
 
 # Project Setup
