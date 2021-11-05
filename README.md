@@ -2,7 +2,7 @@
 YouTube video link for the project: https://youtu.be/VlpgEhphmcE
 
 # Description
---------------------
+
 SUST Viva Scheduler is a dynamic web application that allows users to schedule and participate in viva or appointments. This app categorizes users in two types - student and teacher. Based on the type, users can have different functionalities.
 
 Teachers can schedule viva for different courses by providing the semester in which the course is taken, course name, viva date and viva start time. Teachers can also delete viva which they have created. 
